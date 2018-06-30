@@ -14,6 +14,12 @@ var xhr = new XMLHttpRequest();
 var mongo = require('mongodb');
 const app = express();
 var user;
+//Module importieren
+var newUser = require('./database/newUser');
+var fetchAPI = require('./fetchAPI');
+var date = require("./date");
+
+
 
 app.set('port', 3000);
 //Erlaub die Verarbeitung von Daten//
@@ -24,7 +30,9 @@ app.use(bodyParser.json());
 app.post('/webhook', async (request, response) => {
 	// Hier kommt der Request von Webhook rein
   	const requestBody = request.body.queryResult;
-	//user = request.body.originalDetectIntentRequest.payload.recipient.id;
+	//Eindeutige User-Identifizierung
+	var user = request.body.originalDetectIntentRequest.payload.recipient.id;
+	console.log('Die User-ID lautet: '+user);
 	// Hier wird zwischen dem Intent entschieden. Sucht er ein Event oder will er das Wetter
 	if(requestBody.action === 'getEvent'){
 		console.log("Es wird nach einem "+requestBody.parameters.genre+" Event gesucht!");
@@ -224,32 +232,7 @@ app.post('/webhook', async (request, response) => {
 			.catch((error)=>{
 				console.log(error);
   			});
-	}
-		/*
-		// JSON Call nach diesem Link https://www.w3schools.com/xml/dom_httprequest.asp
-		loadXMLDoc();cookie: PHPSESSID=465566a75b4eaa90dbd39f90157f8d33
-		function loadXMLDoc() {
-			//Neuen Reqeuest anlegen
-  			var xhttp = new XMLHttpRequest();
-  			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-				console.log("Response: "+this.responseText);
-				// Daten in data abspeichern und parsen nach: https://www.mkyong.com/javascript/how-to-access-json-object-in-javascript/
-				let data = JSON.parse(this.responseText);
-				console.log("Data: "+data);
-				// Anlegen des Antwortobjektes nach https://developers.google.com/actions/reference/v1/dialogflow-webhook
-				let answer = {
-					"speech":"Die Uni ist dumm",
-					"displayText":"Die Uni ist dumm"
-				};
-				response.send(answer);
-				}
-  			};
-			xhttp.open("POST", apiPath , true);
-			xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhttp.send("request=login&timestamp=1528725801999&editor=anonymous&user=bmm3&password=hsrm-2018");
-			} 
-		}*/else{
+	}else{
 			let answer = {
 					"speech":"Bidde nochmal!",
 					"displayText":"Bidde nochmal!"
